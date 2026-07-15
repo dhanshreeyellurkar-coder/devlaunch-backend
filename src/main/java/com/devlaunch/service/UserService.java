@@ -9,7 +9,7 @@ import com.devlaunch.repository.UserRepository;
 import com.devlaunch.exception.ResourceNotFoundException;
 import com.devlaunch.exception.EmailAlreadyExistsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
+import com.devlaunch.dto.UserResponse;
 
 @Service
 public class UserService {
@@ -20,7 +20,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User saveUser(User user) {
+    public UserResponse saveUser(User user) {
 
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new EmailAlreadyExistsException("Email already exists!");
@@ -28,49 +28,73 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
+        return convertToResponse(savedUser);
     }
     
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserResponse> getAllUsers() {
+
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                .map(this::convertToResponse)
+                .toList();
     }
     
-    public User getUserById(Long id) {
-        return userRepository.findById(id)
+    public UserResponse getUserById(Long id) {
+
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
+        return convertToResponse(user);
     }
 
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-    
-    public User updateUser(Long id, User updatedUser) {
-        User existingUser = userRepository.findById(id).orElse(null);
+    public UserResponse getUserByEmail(String email) {
 
-        if (existingUser != null) {
-            existingUser.setName(updatedUser.getName());
-            existingUser.setEmail(updatedUser.getEmail());
+        User user = userRepository.findByEmail(email);
 
-            return userRepository.save(existingUser);
+        if (user == null) {
+            throw new ResourceNotFoundException("User not found");
         }
 
-        return null;
+        return convertToResponse(user);
+    }
+    
+    public UserResponse updateUser(Long id, User updatedUser) {
+
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        existingUser.setName(updatedUser.getName());
+        existingUser.setEmail(updatedUser.getEmail());
+
+        User savedUser = userRepository.save(existingUser);
+
+        return convertToResponse(savedUser);
     }
     
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
     
-    public User getUserByName(String name) {
+    public UserResponse getUserByName(String name) {
 
         User user = userRepository.findByName(name);
 
         if (user == null) {
-            throw new ResourceNotFoundException("User not found with name: " + name);
+            throw new ResourceNotFoundException("User not found");
         }
 
-        return user;
+        return convertToResponse(user);
+    }
+    
+    private UserResponse convertToResponse(User user) {
+        return new UserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail()
+        );
     }
 
 }

@@ -10,7 +10,7 @@ import com.devlaunch.service.UserService;
 
 import jakarta.validation.Valid;
 import java.util.List;
-
+import com.devlaunch.dto.UserResponse;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -20,55 +20,52 @@ public class UserController {
 
     // CREATE USER
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody User user) {
 
-        User savedUser = userService.saveUser(user);
+        UserResponse savedUser = userService.saveUser(user);
 
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
-
     // GET ALL USERS
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
 
-        List<User> users = userService.getAllUsers();
-
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     // GET USER BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
 
-        User user = userService.getUserById(id);
+        UserResponse user = userService.getUserById(id);
 
         return ResponseEntity.ok(user);
     }
 
     // GET USER BY EMAIL
     @GetMapping("/email/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
+    public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email) {
 
-        User user = userService.getUserByEmail(email);
+        UserResponse user = userService.getUserByEmail(email);
 
         return ResponseEntity.ok(user);
     }
 
     // GET USER BY NAME
     @GetMapping("/name/{name}")
-    public ResponseEntity<User> getUserByName(@PathVariable String name) {
+    public ResponseEntity<UserResponse> getUserByName(@PathVariable String name) {
 
-        User user = userService.getUserByName(name);
+        UserResponse user = userService.getUserByName(name);
 
         return ResponseEntity.ok(user);
     }
 
     // UPDATE USER
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id,
-                                           @RequestBody User user) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id,
+                                                   @RequestBody User user) {
 
-        User updatedUser = userService.updateUser(id, user);
+        UserResponse updatedUser = userService.updateUser(id, user);
 
         return ResponseEntity.ok(updatedUser);
     }
