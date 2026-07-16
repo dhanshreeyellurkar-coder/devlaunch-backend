@@ -11,6 +11,7 @@
 	<groupId>com.devlaunch</groupId>
 	<artifactId>devlaunch-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	
 	<name/>
 	<description/>
 	<url/>
@@ -43,11 +44,10 @@
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>com.mysql</groupId>
-			<artifactId>mysql-connector-j</artifactId>
-			<scope>runtime</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
